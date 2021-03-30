@@ -5,18 +5,17 @@ import leftArrow from '../assets/img/left-arrow.svg'
 import prev from '../assets/img/prev.svg'
 import next from '../assets/img/next.svg'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPerPage } from '../redux/paginationReducer'
+import { setActivePage, setPerPage } from '../redux/paginationReducer'
 
 function Pagination() {
-    const {totalCount, perPage} = useSelector(({pagination}) => {
+    const { totalCount, perPage, activePage } = useSelector(({ pagination }) => {
         return pagination
     })
     const dispatch = useDispatch()
-    const [activePage, setActivePage] = useState(1)
     const [portionNumber, setPortionNumber] = useState(1)
 
     useEffect(() => {
-        localStorage.getItem('activePage') && setActivePage(Number(localStorage.getItem('activePage')))
+        localStorage.getItem('activePage') && dispatch(setActivePage(Number(localStorage.getItem('activePage'))))
         localStorage.getItem('portionNumber') && setPortionNumber(Number(localStorage.getItem('portionNumber')))
     }, [])
 
@@ -28,6 +27,19 @@ function Pagination() {
             return setPortionNumber(portionNumber - 1)
         }
     }, [activePage])
+
+    useEffect(() => {
+        if (perPage === 10) {
+            setPortionNumber(Math.ceil(activePage / 10))
+        }
+        if (perPage === 50) {
+            if (activePage > 50) {
+                setPortionNumber(2)
+            } else {
+                setPortionNumber(1)
+            }
+        }
+    }, [onSetCountPages])
 
     useEffect(() => {
         localStorage.setItem('activePage', activePage)
@@ -45,20 +57,21 @@ function Pagination() {
         numberOfPages.push(i)
     }
 
-    const pressRightArrow = () => setActivePage(activePage + 1)
-    const pressLeftArrow = () => setActivePage(activePage - 1)
+    const pressRightArrow = () => dispatch(setActivePage(activePage + 1))
+    const pressLeftArrow = () => dispatch(setActivePage(activePage - 1))
     const pressPrev = () => {
         setPortionNumber(portionNumber - 1)
-        setActivePage(leftPortionNumbers - perPage)
+        dispatch(setActivePage(leftPortionNumbers - perPage))
     }
     const pressNext = () => {
         setPortionNumber(portionNumber + 1)
-        setActivePage(rightPortionPageNumber + 1)
+        dispatch(setActivePage(rightPortionPageNumber + 1))
     }
 
-    function onSetPage(e) {
-        dispatch(setPerPage(Number(e.target.value)))    
+    function onSetCountPages(e) {
+        dispatch(setPerPage(Number(e.target.value)))
     }
+    const chaneActivePage = (i) => dispatch(setActivePage(i))
 
 
     return (
@@ -74,7 +87,7 @@ function Pagination() {
                 {numberOfPages
                     .filter(p => p >= leftPortionNumbers && p <= rightPortionPageNumber)
                     .map(i => (
-                        <a onClick={() => setActivePage(i)} className={activePage === i ? "active" : ""} key={i} href="!#">{i}</a>)
+                        <a onClick={() => chaneActivePage(i)} className={activePage === i ? "active" : ""} key={i} href="!#">{i}</a>)
                     )}
                 <button onClick={pressRightArrow} disabled={activePage === pages ? true : false} >
                     <img src={rightArrow} alt="right" />
@@ -85,7 +98,7 @@ function Pagination() {
                 </button>
             </div>
             <div className="select">
-                <select onChange={onSetPage}>
+                <select onChange={onSetCountPages}>
                     <option disabled>Выберите количество отображаемых страниц</option>
                     <option value="10">10</option>
                     <option value="50">50</option>
