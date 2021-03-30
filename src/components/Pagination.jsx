@@ -4,11 +4,16 @@ import rightArrow from '../assets/img/right-arrow.svg'
 import leftArrow from '../assets/img/left-arrow.svg'
 import prev from '../assets/img/prev.svg'
 import next from '../assets/img/next.svg'
+import { useDispatch, useSelector } from 'react-redux'
+import { setPerPage } from '../redux/paginationReducer'
 
 function Pagination() {
+    const {totalCount, perPage} = useSelector(({pagination}) => {
+        return pagination
+    })
+    const dispatch = useDispatch()
     const [activePage, setActivePage] = useState(1)
     const [portionNumber, setPortionNumber] = useState(1)
-    const [perPage, setPerPage] = useState(10)
 
     useEffect(() => {
         localStorage.getItem('activePage') && setActivePage(Number(localStorage.getItem('activePage')))
@@ -29,7 +34,7 @@ function Pagination() {
         localStorage.setItem('portionNumber', portionNumber)
     }, [activePage])
 
-    const pages = 101
+    let pages = totalCount
 
     let portionSize = Math.ceil(pages / perPage)
     let leftPortionNumbers = (portionNumber - 1) * perPage + 1
@@ -51,9 +56,8 @@ function Pagination() {
         setActivePage(rightPortionPageNumber + 1)
     }
 
-    const foo = (e) => {
-        let a = e.target.value
-        debugger;
+    function onSetPage(e) {
+        dispatch(setPerPage(Number(e.target.value)))    
     }
 
 
@@ -81,7 +85,7 @@ function Pagination() {
                 </button>
             </div>
             <div className="select">
-                <select onChange={foo}>
+                <select onChange={onSetPage}>
                     <option disabled>Выберите количество отображаемых страниц</option>
                     <option value="10">10</option>
                     <option value="50">50</option>
