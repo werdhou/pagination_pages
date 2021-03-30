@@ -33,11 +33,10 @@ function Pagination() {
             setPortionNumber(Math.ceil(activePage / 10))
         }
         if (perPage === 50) {
-            if (activePage > 50) {
-                setPortionNumber(2)
-            } else {
-                setPortionNumber(1)
-            }
+            setPortionNumber(Math.ceil(activePage / 50))
+        }
+        if (perPage === 100) {
+            setPortionNumber(Math.ceil(activePage / 100))
         }
     }, [onSetCountPages])
 
