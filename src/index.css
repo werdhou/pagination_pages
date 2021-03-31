@@ -68,10 +68,32 @@ button:disabled {
 .pagination-container a:hover:not(.active) {background-color: rgb(238, 238, 238);}
 
 .select {
-  padding-top: 20px;
   display: flex;
   flex-direction: column;
   text-align: center;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+}
+.select select {
+  margin: 10px;
+  max-width: 300px;
+}
+.posts {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  left: 50%;
+}
+
+.post {
+  text-decoration: none;
+  font-size: 16px;
+  border: 1px solid rgb(12, 182, 238);
+  height: 40px;
+  margin-bottom: 2px;
+  list-style: none;
+  max-width: 600px;
+  margin: 0;
+
 }
